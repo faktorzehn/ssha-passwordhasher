@@ -1,0 +1,32 @@
+﻿
+This project is a fork of http://code.google.com/p/hashing-password-filter/ - with following changes: 
+
+* generates OpenLDAP-compliant Salted SSHA (SHA-1) Hash in "userPassword" attribute
+* 8-Byte (urandom) Salt
+* uses Wincrypt insted of own SHA1-Implementation
+* removed GoogleApps integration. See http://code.google.com/p/hashing-password-filter/ if you need it.
+
+Installation
+
+Information required:
+
+* User name and password of a non Administrator account on the active directory machine (syncAppUser)
+* User name and password of an account with read privilege of the Active directory and write privilege of the custom field “hashedPassword” of the user entries. This privilege can be given sing the “Delegate controls” wizard of the Active Directory Users and Computers" mmc snapin
+
+Installation steps:
+
+* Install Unix-Services for Windows Schema Extension on your AD-Controllers (provides userPassword Attribute)
+* Copy the filter (HashingPasswordFilter.dll) in c:\windows\system32
+* execute "rundll32 HashingPasswordFilter.dll" and restart the Machine.
+* Check the installation by clicking start -> type "msinfo32" -> "Software Environment" -> "Loaded Modules" -> should see HashingPasswordFilter in the list
+* Register the filter using the allegated reg file (HashingPasswordFilter.reg)
+* Create a User and add the following special permission to syncAppUser using "Domain Controller Security Policy"
+  - Allow Log On Locally
+  - Log on as a batch job
+* Copy the accluded ini to the ProgramData folder ("C:\Documents and Settings\All Users\Application Data" under windows server 2003)
+* Modify the copy of the ini file with your data
+* Make it readable only by administrators account
+* Activate the option "User must change password at next logon" for all the accounts to sync
+* Restart the machine
+* Check the installation by looking inside the filter log (C:\Documents and Settings\All Users\Application Data\HashingPasswordFilter.log)
+
